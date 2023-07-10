@@ -1,23 +1,43 @@
 import logo from './logo.svg';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import './App.css';
 
+const useInterval = (callback, delay) => {
+  useEffect(() => {
+      const interval = setInterval(() => 
+          callback()
+      , delay || 0);
+      return () => clearInterval(interval);
+  }, [callback, delay]);
+}
+
 function App() {
+  const [orig, setOrig] = useState("");
+  const [text, setText] = useState("");
+  const [playing, setPlaying] = useState(false);
+  const showing = useRef(0);
+  const callback = useCallback(() => {
+    if (playing) {
+      console.log("a");
+      if (showing.current + 3 > text.length)
+      setText(orig.slice(showing.current, showing.current + 5));
+      showing.current += 5;
+    } else {
+      showing.current = 0;
+    }
+  }, [text, playing, showing, setText]);
+  useInterval(callback, 300);
+  const onChange = (text) => {
+    setOrig(text)
+    showing.current = 0;
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input type="text" onChange={e => onChange(e.target.value)} />
+      <button onClick={() => setPlaying(true)}>start</button>
+      <button onClick={() => setPlaying(false)}>stop</button>
+      <h2 className='text'>
+        {text}</h2>
     </div>
   );
 }
