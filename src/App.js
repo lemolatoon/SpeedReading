@@ -18,13 +18,13 @@ function App() {
   const callback = useCallback(() => {
     if (playing) {
       console.log("a");
-      if (showing.current + 3 > orig.length)
+      if (showing.current + 3 > text.length)
       setText(orig.slice(showing.current, showing.current + 5));
       showing.current += 5;
     } else {
       showing.current = 0;
     }
-  }, [playing, showing, setText, orig]);
+  }, [text, playing, showing, setText, orig]);
   useInterval(callback, 300);
   const onChange = (text) => {
     setOrig(text)
